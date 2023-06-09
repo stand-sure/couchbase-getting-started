@@ -1,0 +1,5 @@
+CouchGraphQl.GraphQl.Query
+CouchGraphQl.GraphQl.Query.GetAirlines(Couchbase.Extensions.DependencyInjection.INamedBucketProvider! namedBucketProvider, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Linq.IQueryable<CouchGraphQl.Data.Documents.Airline!>!>!
+CouchGraphQl.GraphQl.Query.Query() -> void
+CouchGraphQl.Program
+CouchGraphQl.Program.Program() -> void
