@@ -1,27 +1,32 @@
 namespace CouchGraphQl.Data.Documents;
 
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-public class Airline
+using JetBrains.Annotations;
+
+using Newtonsoft.Json;
+
+[PublicAPI]
+public class Airline : AirlineCreateInput, IEntityWithId<int>
 {
-    [JsonPropertyName("callsign")]
-    public string? Callsign { get; set; }
+    public Airline()
+    {
+    }
 
-    [JsonPropertyName("country")]
-    public string? Country { get; set; }
+    public Airline(int id, AirlineCreateInput createInput)
+    {
+        this.Id = id;
+        this.Callsign = createInput.Callsign;
+        this.Country = createInput.Country;
+        this.Iata = createInput.Iata;
+        this.Icao = createInput.Icao;
+        this.Name = createInput.Name;
+        this.Type = createInput.Type;
+    }
 
-    [JsonPropertyName("iata")]
-    public string? Iata { get; set; }
-
-    [JsonPropertyName("icao")]
-    public string? Icao { get; set; }
-
+    [Key]
     [JsonPropertyName("id")]
-    public string? Id { get; set; }
-
-    [JsonPropertyName("name")]
-    public string? Name { get; set; }
-
-    [JsonPropertyName("type")]
-    public string? Type { get; set; }
+    [JsonProperty("id")]
+    public int Id { get; set; }
 }

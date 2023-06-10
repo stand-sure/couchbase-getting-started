@@ -19,7 +19,7 @@ public class Program
 
         builder.Host.ConfigureHostBuilder();
 
-        builder.Host.ConfigureServices(ProgramConfiguration.ServiceConfiguration);
+        builder.Services.ConfigureServices(builder.Configuration, builder.Environment);
 
         WebApplication app = builder.Build();
 
