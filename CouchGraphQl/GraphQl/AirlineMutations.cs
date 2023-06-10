@@ -13,19 +13,12 @@ public class AirlineMutations
 {
     private const string MessageTemplate = $"{nameof(AirlineMutations)}: {{Message}}";
 
-    private readonly ILogger<AirlineMutations> logger;
-
-    public AirlineMutations(ILogger<AirlineMutations> logger)
-    {
-        this.logger = logger;
-    }
-
     public async Task<Airline?> CreateAirlineAsync(
         [Service] MyBucketContext bucketContext,
+        [Service] ILogger<AirlineMutations> logger,
         AirlineCreateInput airlineCreateInput)
     {
-        int id = Math.Abs(BitConverter.ToInt32(Guid.NewGuid().ToByteArray()));
-        string key = $"{nameof(Airline)}_{id}".ToLowerInvariant();
+        (int id, string? key) = GenerateIdAndKey();
         
         var airline = new Airline(id, airlineCreateInput);
         
@@ -35,9 +28,17 @@ public class AirlineMutations
 
         Airline? a = await GetAirlineAsync(collection, key);
 
-        this.logger.LogDebug(AirlineMutations.MessageTemplate, a?.ToString());
+        logger.LogDebug(AirlineMutations.MessageTemplate, a?.ToString());
 
         return a;
+    }
+
+    private static (int id, string key) GenerateIdAndKey()
+    {
+        int id = Math.Abs(BitConverter.ToInt32(Guid.NewGuid().ToByteArray()));
+        string key = $"{nameof(Airline)}_{id}".ToLowerInvariant();
+
+        return (id, key);
     }
 
     private static Task<Airline?> GetAirlineAsync(ICouchbaseCollection collection, string key)
