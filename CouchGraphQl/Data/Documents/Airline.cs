@@ -25,7 +25,6 @@ public class Airline : AirlineCreateInput, IEntityWithId<int>
         this.Name = createInput.Name;
     }
 
-    [Key]
     [JsonPropertyName("id")]
     public int Id { get; set; }
 
