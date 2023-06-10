@@ -2,9 +2,11 @@ namespace CouchGraphQl;
 
 using System.Reflection;
 
+using Couchbase;
 using Couchbase.Extensions.DependencyInjection;
 using Couchbase.Linq;
 
+using CouchGraphQl.Data;
 using CouchGraphQl.GraphQl;
 
 using HotChocolate.Execution.Configuration;
@@ -68,6 +70,17 @@ internal static class ProgramConfiguration
             configuration.GetSection("couchbase").Bind(options);
             options.AddLinq();
         }).AddCouchbaseBucket<INamedBucketProvider>("travel-sample");
+
+        services.AddSingleton<IBucket>(provider =>
+        {
+            var namedBucketProvider = ActivatorUtilities.GetServiceOrCreateInstance<INamedBucketProvider>(provider);
+
+            Task<IBucket> task = namedBucketProvider.GetBucketAsync().AsTask();
+            
+            return task.GetAwaiter().GetResult();
+        });
+
+        services.AddTransient<MyBucketContext>();
 
         services.AddGraphQLServer()
             .ModifyOptions(ConfigureSchemaOptions)

@@ -3,11 +3,12 @@ namespace CouchGraphQl.Data.Documents;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
+using Couchbase.Linq.Filters;
+
 using JetBrains.Annotations;
 
-using Newtonsoft.Json;
-
 [PublicAPI]
+[DocumentTypeFilter("airline")]
 public class Airline : AirlineCreateInput, IEntityWithId<int>
 {
     public Airline()
@@ -22,11 +23,12 @@ public class Airline : AirlineCreateInput, IEntityWithId<int>
         this.Iata = createInput.Iata;
         this.Icao = createInput.Icao;
         this.Name = createInput.Name;
-        this.Type = createInput.Type;
     }
 
     [Key]
     [JsonPropertyName("id")]
-    [JsonProperty("id")]
     public int Id { get; set; }
+
+    [JsonPropertyName("type")]
+    public string Type { get; set; } = nameof(Airline).ToLowerInvariant();
 }

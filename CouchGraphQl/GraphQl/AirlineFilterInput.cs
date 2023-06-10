@@ -13,6 +13,7 @@ public class AirlineFilterInput : FilterInputType<Airline>
     {
         descriptor.Name(this.GetType().Name);
         descriptor.Field(airline => airline.Id).Name("iid");
+        descriptor.Field(airline => airline.Type).Ignore();
         base.Configure(descriptor);
     }
 }

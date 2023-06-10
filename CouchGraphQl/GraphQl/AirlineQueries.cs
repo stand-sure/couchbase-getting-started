@@ -2,11 +2,7 @@ namespace CouchGraphQl.GraphQl;
 
 using System.Text.Json;
 
-using Couchbase;
-using Couchbase.Extensions.DependencyInjection;
-using Couchbase.Linq;
-using Couchbase.Linq.Metadata;
-
+using CouchGraphQl.Data;
 using CouchGraphQl.Data.Documents;
 
 using JetBrains.Annotations;
@@ -29,15 +25,9 @@ public class AirlineQueries
     [UsePaging]
     [UseFiltering(typeof(AirlineFilterInput))]
     [UseSorting(typeof(AirlineSortInput))]
-    public async Task<IQueryable<Airline>> GetAirlines(
-        [Service] INamedBucketProvider namedBucketProvider,
-        CancellationToken cancellationToken = default)
+    public IQueryable<Airline> GetAirlines([Service] MyBucketContext bucketContext)
     {
-        IBucket bucket = await namedBucketProvider.GetBucketAsync().ConfigureAwait(false);
-
-        var context = new BucketContext(bucket);
-
-        IQueryable<Airline> query = context.Query<Airline>()
+        IQueryable<Airline> query = bucketContext.Airlines
             .OrderByDescending(airline => airline.Name != null)
             .ThenBy(airline => airline.Name);
 

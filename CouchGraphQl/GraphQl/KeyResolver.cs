@@ -26,10 +26,10 @@ internal class KeyResolver
 
         IQueryable<T> records = context.Query<T>();
 
-        string? key = (from record in records
-            where record.Id == document.Id
-            select N1QlFunctions.Key(record)).SingleOrDefault();
+        IEnumerable<string> keys = (from record in records
+            where record.Id == document.Id && record.Type == document.Type
+            select N1QlFunctions.Key(record)).ToList();
         
-        return key;
+        return keys.SingleOrDefault();
     }
 }
