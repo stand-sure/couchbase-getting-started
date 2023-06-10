@@ -11,21 +11,14 @@ using JetBrains.Annotations;
 [ExtendObjectType(OperationTypeNames.Query)]
 public class AirlineQueries
 {
-    private readonly ILogger<AirlineQueries> logger;
     private const string MessageTemplate = $"{nameof(AirlineQueries)}: {{Message}}";
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="AirlineQueries"/> class.
-    /// </summary>
-    public AirlineQueries(ILogger<AirlineQueries> logger)
-    {
-        this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
 
     [UsePaging]
     [UseFiltering(typeof(AirlineFilterInput))]
     [UseSorting(typeof(AirlineSortInput))]
-    public IQueryable<Airline> GetAirlines([Service] MyBucketContext bucketContext)
+    public IQueryable<Airline> GetAirlines(
+        [Service] MyBucketContext bucketContext,
+        [Service] ILogger<AirlineQueries> logger)
     {
         IQueryable<Airline> query = bucketContext.Airlines
             .OrderByDescending(airline => airline.Name != null)
@@ -33,7 +26,7 @@ public class AirlineQueries
 
 #if DEBUG
         string s = JsonSerializer.Serialize(query.FirstOrDefault());
-        this.logger.LogDebug(AirlineQueries.MessageTemplate, s);
+        logger.LogDebug(AirlineQueries.MessageTemplate, s);
 #endif
         return query;
     }
