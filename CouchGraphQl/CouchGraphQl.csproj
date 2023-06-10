@@ -10,6 +10,8 @@
     <ItemGroup>
         <PackageReference Include="Couchbase.Extensions.DependencyInjection" Version="3.4.7" />
         <PackageReference Include="HotChocolate.AspNetCore" Version="13.2.1" />
+        <PackageReference Include="HotChocolate.Data" Version="13.2.1" />
+        <PackageReference Include="HotChocolate.Diagnostics" Version="13.2.1" />
         <PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
         <PackageReference Include="Linq2Couchbase" Version="2.0.0" />
         <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4">
@@ -24,6 +26,11 @@
         <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="7.0.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
         <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="7.0.5" />
+        <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.5.0" />
+        <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.5.0" />
+        <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.5.0" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.5.0-beta.1" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.5.0-beta.1" />
         <PackageReference Include="prometheus-net.AspNetCore" Version="8.0.0" />
         <PackageReference Include="prometheus-net.AspNetCore.HealthChecks" Version="8.0.0" />
         <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
