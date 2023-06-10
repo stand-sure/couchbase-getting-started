@@ -1,9 +1,8 @@
 namespace CouchGraphQl.GraphQl;
 
-using Couchbase;
-using Couchbase.Extensions.DependencyInjection;
 using Couchbase.KeyValue;
 
+using CouchGraphQl.Data;
 using CouchGraphQl.Data.Documents;
 
 using JetBrains.Annotations;
@@ -22,16 +21,17 @@ public class AirlineMutations
     }
 
     public async Task<Airline?> CreateAirlineAsync(
-        [Service] INamedBucketProvider namedBucketProvider,
+        [Service] MyBucketContext bucketContext,
         AirlineCreateInput airlineCreateInput)
     {
-        var keyGuid = Guid.NewGuid();
-        string key = keyGuid.ToString().ToLowerInvariant();
-        var id = BitConverter.ToInt32(keyGuid.ToByteArray());
+        int id = Math.Abs(BitConverter.ToInt32(Guid.NewGuid().ToByteArray()));
+        string key = $"{nameof(Airline)}_{id}".ToLowerInvariant();
+        
         var airline = new Airline(id, airlineCreateInput);
         
-        ICouchbaseCollection collection = await GetCollection(namedBucketProvider).ConfigureAwait(false);
-        _ = await collection.UpsertAsync(key, airline).ConfigureAwait(false);
+        ICouchbaseCollection collection = bucketContext.Airlines.Collection;
+        
+        _ = await collection.UpsertAsync(key, airline);
 
         Airline? a = await GetAirlineAsync(collection, key);
 
@@ -40,22 +40,11 @@ public class AirlineMutations
         return a;
     }
 
-    private static async Task<Airline?> GetAirlineAsync(ICouchbaseCollection collection, string key)
+    private static Task<Airline?> GetAirlineAsync(ICouchbaseCollection collection, string key)
     {
-        IGetResult getResult = await collection.GetAsync(key).ConfigureAwait(false);
-        var airline = getResult.ContentAs<Airline>();
+        static Airline? GetResult(Task<IGetResult> task) => 
+            task.Result.ContentAs<Airline>();
 
-        return airline;
-    }
-
-    private static async Task<ICouchbaseCollection> GetCollection(INamedBucketProvider namedBucketProvider)
-    {
-        IBucket bucket = await namedBucketProvider.GetBucketAsync().ConfigureAwait(false);
-
-        IScope scope = await bucket.ScopeAsync("inventory").ConfigureAwait(false);
-
-        ICouchbaseCollection collection = await scope.CollectionAsync("airline").ConfigureAwait(false);
-
-        return (collection);
+        return collection.GetAsync(key).ContinueWith(GetResult);
     }
 }

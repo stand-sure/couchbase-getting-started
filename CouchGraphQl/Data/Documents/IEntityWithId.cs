@@ -7,4 +7,7 @@ public interface IEntityWithId<T>
 {
     [Required]
     T Id { get; set; }
+    
+    [Required]
+    string Type { get; set; }
 }
