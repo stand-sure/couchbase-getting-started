@@ -1,6 +1,5 @@
 namespace CouchGraphQl.Data.Documents;
 
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 using Couchbase.Linq.Filters;
