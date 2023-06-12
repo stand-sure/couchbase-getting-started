@@ -1,3 +1,11 @@
+abstract CouchGraphQl.Data.AccessorBase<T, TCreate>.MakeEntity(int id, TCreate createInfo) -> T
+CouchGraphQl.Data.AccessorBase<T, TCreate>
+CouchGraphQl.Data.AccessorBase<T, TCreate>.AccessorBase(CouchGraphQl.Data.MyBucketContext! bucketContext, Microsoft.Extensions.Logging.ILogger<CouchGraphQl.Data.AccessorBase<T, TCreate>!>! logger) -> void
+CouchGraphQl.Data.AccessorBase<T, TCreate>.CreateAsync(TCreate createInfo, string! scope = "inventory") -> System.Threading.Tasks.Task<T?>!
+CouchGraphQl.Data.AccessorBase<T, TCreate>.Queryable.get -> System.Linq.IQueryable<T>!
+CouchGraphQl.Data.AirlineAccessor
+CouchGraphQl.Data.AirlineAccessor.AirlineAccessor(CouchGraphQl.Data.MyBucketContext! bucketContext, Microsoft.Extensions.Logging.ILogger<CouchGraphQl.Data.AirlineAccessor!>! logger) -> void
+CouchGraphQl.Data.AirlineAccessor.CreateAsync(CouchGraphQl.Data.Documents.AirlineCreateInput! createInput) -> System.Threading.Tasks.Task<CouchGraphQl.Data.Documents.Airline?>!
 CouchGraphQl.Data.Documents.Airline
 CouchGraphQl.Data.Documents.Airline.Airline() -> void
 CouchGraphQl.Data.Documents.Airline.Airline(int id, CouchGraphQl.Data.Documents.AirlineCreateInput! createInput) -> void
@@ -30,10 +38,10 @@ CouchGraphQl.GraphQl.AirlineFilterInput
 CouchGraphQl.GraphQl.AirlineFilterInput.AirlineFilterInput() -> void
 CouchGraphQl.GraphQl.AirlineMutations
 CouchGraphQl.GraphQl.AirlineMutations.AirlineMutations() -> void
-CouchGraphQl.GraphQl.AirlineMutations.CreateAirlineAsync(CouchGraphQl.Data.MyBucketContext! bucketContext, Microsoft.Extensions.Logging.ILogger<CouchGraphQl.GraphQl.AirlineMutations!>! logger, CouchGraphQl.Data.Documents.AirlineCreateInput! airlineCreateInput) -> System.Threading.Tasks.Task<CouchGraphQl.Data.Documents.Airline?>!
+CouchGraphQl.GraphQl.AirlineMutations.CreateAirlineAsync(CouchGraphQl.Data.AirlineAccessor! airlineAccessor, CouchGraphQl.Data.Documents.AirlineCreateInput! airlineCreateInput) -> System.Threading.Tasks.Task<CouchGraphQl.Data.Documents.Airline?>!
 CouchGraphQl.GraphQl.AirlineQueries
 CouchGraphQl.GraphQl.AirlineQueries.AirlineQueries() -> void
-CouchGraphQl.GraphQl.AirlineQueries.GetAirlines(CouchGraphQl.Data.MyBucketContext! bucketContext, Microsoft.Extensions.Logging.ILogger<CouchGraphQl.GraphQl.AirlineQueries!>! logger) -> System.Linq.IQueryable<CouchGraphQl.Data.Documents.Airline!>!
+CouchGraphQl.GraphQl.AirlineQueries.GetAirlines(CouchGraphQl.Data.AirlineAccessor! airlineAccessor) -> System.Linq.IQueryable<CouchGraphQl.Data.Documents.Airline!>!
 CouchGraphQl.GraphQl.AirlineSortInput
 CouchGraphQl.GraphQl.AirlineSortInput.AirlineSortInput() -> void
 CouchGraphQl.GraphQl.AirlineType
@@ -42,6 +50,7 @@ CouchGraphQl.GraphQl.ObjectTypeWithId<T>
 CouchGraphQl.GraphQl.ObjectTypeWithId<T>.ObjectTypeWithId() -> void
 CouchGraphQl.Program
 CouchGraphQl.Program.Program() -> void
+override CouchGraphQl.Data.AirlineAccessor.MakeEntity(int id, CouchGraphQl.Data.Documents.AirlineCreateInput! createInfo) -> CouchGraphQl.Data.Documents.Airline!
 override CouchGraphQl.GraphQl.AirlineFilterInput.Configure(HotChocolate.Data.Filters.IFilterInputTypeDescriptor<CouchGraphQl.Data.Documents.Airline!>! descriptor) -> void
 override CouchGraphQl.GraphQl.AirlineSortInput.Configure(HotChocolate.Data.Sorting.ISortInputTypeDescriptor<CouchGraphQl.Data.Documents.Airline!>! descriptor) -> void
 override CouchGraphQl.GraphQl.ObjectTypeWithId<T>.Configure(HotChocolate.Types.IObjectTypeDescriptor<T>! descriptor) -> void

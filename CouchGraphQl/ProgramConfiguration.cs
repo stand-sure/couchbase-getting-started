@@ -81,6 +81,7 @@ internal static class ProgramConfiguration
         });
 
         services.AddTransient<MyBucketContext>();
+        services.AddScoped<AirlineAccessor>();
 
         services.AddGraphQLServer()
             .ModifyOptions(ConfigureSchemaOptions)
