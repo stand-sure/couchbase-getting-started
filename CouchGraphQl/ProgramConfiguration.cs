@@ -90,11 +90,13 @@ internal static class ProgramConfiguration
             .AddTypes()
             .AddMutations()
             .AddGlobalObjectIdentification()
+            .AddQueryFieldToMutationPayloads()
             .ModifyRequestOptions(ConfigureRequestExecutorOptions)
-            .SetPagingOptions(new PagingOptions { MaxPageSize = 100 })
+            .SetPagingOptions(new PagingOptions { MaxPageSize = 100, IncludeTotalCount = true })
             .AddSorting()
             .AddFiltering()
-            .AddErrorFilter<DetailRemovingErrorFilter>();
+            .AddErrorFilter<DetailRemovingErrorFilter>()
+            .AllowIntrospection(true);
 
         services.AddInstrumentation(environment, configuration);
     }
@@ -138,6 +140,7 @@ internal static class ProgramConfiguration
     {
         options.SortFieldsByName = true;
         options.EnableFlagEnums = true;
+        options.RemoveUnreachableTypes = true;
     }
 
     private static void ConfigureTraceProvider(

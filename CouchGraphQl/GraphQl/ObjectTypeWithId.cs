@@ -18,7 +18,8 @@ public abstract class ObjectTypeWithId<T> : ObjectType<T>
 
         descriptor.Field("key")
             .Type<StringType>()
-            .ResolveWith<KeyResolver>(_ => KeyResolver.GetKey<T>(default!, default!));
+            .ResolveWith<KeyResolver>(_ => KeyResolver.GetKey<T>(default!, default!))
+            .ID();
 
         string name = this.GetType().Name;
         var regex = new Regex("(.*)?Type$");
