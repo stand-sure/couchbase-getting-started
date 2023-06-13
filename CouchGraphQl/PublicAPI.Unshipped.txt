@@ -37,7 +37,7 @@ CouchGraphQl.GraphQl.AirlineFilterInput
 CouchGraphQl.GraphQl.AirlineFilterInput.AirlineFilterInput() -> void
 CouchGraphQl.GraphQl.AirlineMutations
 CouchGraphQl.GraphQl.AirlineMutations.AirlineMutations() -> void
-CouchGraphQl.GraphQl.AirlineMutations.CreateAirlineAsync(CouchGraphQl.Data.AirlineAccessor! airlineAccessor, CouchGraphQl.Data.Documents.AirlineCreateInput! airlineCreateInput) -> System.Threading.Tasks.Task<CouchGraphQl.Data.Documents.Airline?>!
+CouchGraphQl.GraphQl.AirlineMutations.CreateAirlineAsync(CouchGraphQl.Data.AirlineAccessor! airlineAccessor, CouchGraphQl.Data.Documents.AirlineCreateInput! airlineCreateInput) -> System.Threading.Tasks.Task<CouchGraphQl.GraphQl.CreateAirlinePayload!>!
 CouchGraphQl.GraphQl.AirlineMutations.Throw() -> System.Threading.Tasks.Task<CouchGraphQl.Data.Documents.Airline?>!
 CouchGraphQl.GraphQl.AirlineQueries
 CouchGraphQl.GraphQl.AirlineQueries.AirlineQueries() -> void
@@ -46,6 +46,10 @@ CouchGraphQl.GraphQl.AirlineSortInput
 CouchGraphQl.GraphQl.AirlineSortInput.AirlineSortInput() -> void
 CouchGraphQl.GraphQl.AirlineType
 CouchGraphQl.GraphQl.AirlineType.AirlineType() -> void
+CouchGraphQl.GraphQl.CreateAirlinePayload
+CouchGraphQl.GraphQl.CreateAirlinePayload.Airline.get -> CouchGraphQl.Data.Documents.Airline?
+CouchGraphQl.GraphQl.CreateAirlinePayload.Airline.set -> void
+CouchGraphQl.GraphQl.CreateAirlinePayload.CreateAirlinePayload() -> void
 CouchGraphQl.GraphQl.ObjectTypeWithId<T>
 CouchGraphQl.GraphQl.ObjectTypeWithId<T>.ObjectTypeWithId() -> void
 CouchGraphQl.Program
