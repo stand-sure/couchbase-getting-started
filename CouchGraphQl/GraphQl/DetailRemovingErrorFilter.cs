@@ -18,14 +18,10 @@ internal class DetailRemovingErrorFilter : IErrorFilter
 
     public IError OnError(IError error)
     {
-        if (this.environment.IsDevelopment())
-        {
-            return error;
-        }
-
         Exception? e = error.Exception;
         var location = $"{e?.TargetSite?.DeclaringType}.{e?.TargetSite?.Name}";
         Log.Error(e, "Error: {Location} {Message} {Stack}", location, e?.Message, e?.StackTrace);
-        return error.RemoveLocations().RemoveCode().RemoveExtension("stackTrace").WithException(new QueryException(error.Message)).WithMessage(error.Message);
+
+        return this.environment.IsDevelopment() ? error : error.RemoveLocations().RemoveCode().RemoveExtension("stackTrace").WithException(new QueryException(error.Message)).WithMessage(error.Message);
     }
 }
