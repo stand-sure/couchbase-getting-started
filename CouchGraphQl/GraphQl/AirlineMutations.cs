@@ -9,10 +9,18 @@ using JetBrains.Annotations;
 [PublicAPI]
 public class AirlineMutations
 {
-   public Task<Airline?> CreateAirlineAsync(
+    public Task<Airline?> CreateAirlineAsync(
         [Service] AirlineAccessor airlineAccessor,
         AirlineCreateInput airlineCreateInput)
     {
         return airlineAccessor.CreateAsync(airlineCreateInput);
+    }
+
+    public Task<Airline?> Throw()
+    {
+        if (true)
+        {
+            throw new InvalidOperationException("this is a test");
+        }
     }
 }
