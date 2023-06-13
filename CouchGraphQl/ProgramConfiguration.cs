@@ -26,7 +26,8 @@ internal static class ProgramConfiguration
 {
     private const string MessageTemplate = $"{nameof(ProgramConfiguration)}: {{Message}}";
 
-    private static void AddInstrumentation(this IServiceCollection services, IWebHostEnvironment environment, IConfiguration configuration)
+    private static void AddInstrumentation(this IServiceCollection services, 
+        IHostEnvironment environment, IConfiguration configuration)
     {
         string serviceName = environment.ApplicationName;
         var version = typeof(Program).GetTypeInfo().Assembly.GetName().Version?.ToString();
@@ -92,7 +93,8 @@ internal static class ProgramConfiguration
             .ModifyRequestOptions(ConfigureRequestExecutorOptions)
             .SetPagingOptions(new PagingOptions { MaxPageSize = 100 })
             .AddSorting()
-            .AddFiltering();
+            .AddFiltering()
+            .AddErrorFilter<DetailRemovingErrorFilter>();
 
         services.AddInstrumentation(environment, configuration);
     }
@@ -142,7 +144,7 @@ internal static class ProgramConfiguration
         this TracerProviderBuilder providerBuilder,
         ResourceBuilder resourceBuilder,
         IConfiguration configuration,
-        IWebHostEnvironment environment,
+        IHostEnvironment environment,
         string serviceName)
     {
         providerBuilder.AddSource(serviceName).SetResourceBuilder(resourceBuilder);
