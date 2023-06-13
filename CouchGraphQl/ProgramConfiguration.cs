@@ -66,20 +66,10 @@ internal static class ProgramConfiguration
         services.AddLogging();
         services.AddHealthChecks();
 
-        services.AddCouchbase(options =>
-        {
-            configuration.GetSection("couchbase").Bind(options);
-            options.AddLinq();
-        }).AddCouchbaseBucket<INamedBucketProvider>("travel-sample");
+        services.AddCouchbase(options => ConfigureClusterOptions(options, configuration))
+            .AddCouchbaseBucket<INamedBucketProvider>("travel-sample");
 
-        services.AddSingleton<IBucket>(provider =>
-        {
-            var namedBucketProvider = ActivatorUtilities.GetServiceOrCreateInstance<INamedBucketProvider>(provider);
-
-            Task<IBucket> task = namedBucketProvider.GetBucketAsync().AsTask();
-            
-            return task.GetAwaiter().GetResult();
-        });
+        services.AddSingleton(BucketFactory);
 
         services.AddTransient<MyBucketContext>();
         services.AddScoped<AirlineAccessor>();
@@ -92,7 +82,7 @@ internal static class ProgramConfiguration
             .AddGlobalObjectIdentification()
             .AddQueryFieldToMutationPayloads()
             .ModifyRequestOptions(ConfigureRequestExecutorOptions)
-            .SetPagingOptions(new PagingOptions { MaxPageSize = 100, IncludeTotalCount = true })
+            .SetPagingOptions(GetPagingOptions())
             .AddSorting()
             .AddFiltering()
             .AddErrorFilter<DetailRemovingErrorFilter>()
@@ -100,6 +90,23 @@ internal static class ProgramConfiguration
 
         services.AddInstrumentation(environment, configuration);
     }
+
+    private static IBucket BucketFactory(IServiceProvider provider)
+    {
+        var namedBucketProvider = ActivatorUtilities.GetServiceOrCreateInstance<INamedBucketProvider>(provider);
+
+        Task<IBucket> task = namedBucketProvider.GetBucketAsync().AsTask();
+            
+        return task.GetAwaiter().GetResult();
+    }
+
+    private static void ConfigureClusterOptions(ClusterOptions options, IConfiguration configuration)
+    {
+        configuration.GetSection("couchbase").Bind(options);
+        options.AddLinq();
+    }
+    
+    private static PagingOptions GetPagingOptions() => new PagingOptions { MaxPageSize = 100, IncludeTotalCount = true };
 
     private static IRequestExecutorBuilder AddMutations(this IRequestExecutorBuilder builder)
     {
