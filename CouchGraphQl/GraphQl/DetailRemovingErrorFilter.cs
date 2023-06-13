@@ -1,7 +1,5 @@
 namespace CouchGraphQl.GraphQl;
 
-using HotChocolate.Execution;
-
 using JetBrains.Annotations;
 
 [UsedImplicitly]
@@ -22,6 +20,6 @@ internal class DetailRemovingErrorFilter : IErrorFilter
         var location = $"{e?.TargetSite?.DeclaringType}.{e?.TargetSite?.Name}";
         this.logger.LogError(e, "Error: {Location} {Message} {Stack}", location, e?.Message, e?.StackTrace);
 
-        return this.environment.IsDevelopment() ? error : error.RemoveLocations().RemoveCode().RemoveExtension("stackTrace").WithException(new QueryException(error.Message)).WithMessage(error.Message);
+        return this.environment.IsDevelopment() ? error : error.RemoveLocations().RemoveCode().RemoveExtension("stackTrace").WithMessage(error.Message);
     }
 }
