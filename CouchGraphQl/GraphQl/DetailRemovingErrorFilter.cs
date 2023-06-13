@@ -4,23 +4,23 @@ using HotChocolate.Execution;
 
 using JetBrains.Annotations;
 
-using Serilog;
-
 [UsedImplicitly]
 internal class DetailRemovingErrorFilter : IErrorFilter
 {
     private readonly IHostEnvironment environment;
+    private readonly ILogger<DetailRemovingErrorFilter> logger;
 
-    public DetailRemovingErrorFilter(IHostEnvironment environment)
+    public DetailRemovingErrorFilter(IHostEnvironment environment, ILogger<DetailRemovingErrorFilter> logger)
     {
-        this.environment = environment;
+        this.environment = environment ?? throw new ArgumentNullException(nameof(environment));
+        this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public IError OnError(IError error)
     {
         Exception? e = error.Exception;
         var location = $"{e?.TargetSite?.DeclaringType}.{e?.TargetSite?.Name}";
-        Log.Error(e, "Error: {Location} {Message} {Stack}", location, e?.Message, e?.StackTrace);
+        this.logger.LogError(e, "Error: {Location} {Message} {Stack}", location, e?.Message, e?.StackTrace);
 
         return this.environment.IsDevelopment() ? error : error.RemoveLocations().RemoveCode().RemoveExtension("stackTrace").WithException(new QueryException(error.Message)).WithMessage(error.Message);
     }
