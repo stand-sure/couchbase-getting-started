@@ -23,7 +23,7 @@ public abstract class AccessorBase<T, TCreate>
 
     public IQueryable<T> Queryable => this.bucketContext.Query<T>();
 
-    public async Task<T?> CreateAsync(TCreate createInfo, string scope = "inventory")
+    public async Task<T?> CreateAsync(TCreate createInfo, string scope = "inventory", CancellationToken cancellationToken = default)
     {
         (int id, string? key) = GenerateIdAndKey();
 
@@ -34,7 +34,13 @@ public abstract class AccessorBase<T, TCreate>
 
         try
         {
-            await collection.UpsertAsync(key, entity);
+            await collection.InsertAsync(key,
+                entity,
+                options =>
+                {
+                    options.CancellationToken(cancellationToken);
+                    options.Durability(DurabilityLevel.MajorityAndPersistToActive);
+                });
         }
         catch (Exception e)
         {

@@ -190,7 +190,11 @@ internal static class ProgramConfiguration
 
     private static PagingOptions GetPagingOptions()
     {
-        return new PagingOptions { MaxPageSize = 100, IncludeTotalCount = true };
+        return new PagingOptions
+        {
+            MaxPageSize = 100, 
+            //IncludeTotalCount = true, // this blows up Couchbase
+        };
     }
 
     private static void HostConfiguration(IConfigurationBuilder configurationBuilder)
