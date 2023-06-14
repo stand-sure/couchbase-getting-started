@@ -26,19 +26,6 @@ internal static class ProgramConfiguration
 {
     private const string MessageTemplate = $"{nameof(ProgramConfiguration)}: {{Message}}";
 
-    private static void AddInstrumentation(this IServiceCollection services, 
-        IHostEnvironment environment, IConfiguration configuration)
-    {
-        string serviceName = environment.ApplicationName;
-        var version = typeof(Program).GetTypeInfo().Assembly.GetName().Version?.ToString();
-        ResourceBuilder resourceBuilder = ResourceBuilder.CreateDefault().AddService(serviceName, version);
-
-        services.AddOpenTelemetry().WithTracing(providerBuilder =>
-        {
-            providerBuilder.ConfigureTraceProvider(resourceBuilder, configuration, environment, serviceName);
-        });
-    }
-
     internal static void ConfigureApplicationBuilder(this IApplicationBuilder app)
     {
         app.UseSerilogRequestLogging();
@@ -48,9 +35,7 @@ internal static class ProgramConfiguration
     internal static void ConfigureEndpointRouteBuilder(this IEndpointRouteBuilder app)
     {
         app.MapMetrics("/metricsz");
-
         app.MapHealthChecks("/healthz");
-
         app.MapGraphQL();
     }
 
@@ -91,22 +76,20 @@ internal static class ProgramConfiguration
         services.AddInstrumentation(environment, configuration);
     }
 
-    private static IBucket BucketFactory(IServiceProvider provider)
+    private static void AddInstrumentation(
+        this IServiceCollection services,
+        IHostEnvironment environment,
+        IConfiguration configuration)
     {
-        var namedBucketProvider = ActivatorUtilities.GetServiceOrCreateInstance<INamedBucketProvider>(provider);
+        string serviceName = environment.ApplicationName;
+        var version = typeof(Program).GetTypeInfo().Assembly.GetName().Version?.ToString();
+        ResourceBuilder resourceBuilder = ResourceBuilder.CreateDefault().AddService(serviceName, version);
 
-        Task<IBucket> task = namedBucketProvider.GetBucketAsync().AsTask();
-            
-        return task.GetAwaiter().GetResult();
+        services.AddOpenTelemetry().WithTracing(providerBuilder =>
+        {
+            providerBuilder.ConfigureTraceProvider(resourceBuilder, configuration, environment, serviceName);
+        });
     }
-
-    private static void ConfigureClusterOptions(ClusterOptions options, IConfiguration configuration)
-    {
-        configuration.GetSection("couchbase").Bind(options);
-        options.AddLinq();
-    }
-    
-    private static PagingOptions GetPagingOptions() => new PagingOptions { MaxPageSize = 100, IncludeTotalCount = true };
 
     private static IRequestExecutorBuilder AddMutations(this IRequestExecutorBuilder builder)
     {
@@ -125,6 +108,15 @@ internal static class ProgramConfiguration
         return builder.AddType<AirlineType>();
     }
 
+    private static IBucket BucketFactory(IServiceProvider provider)
+    {
+        var namedBucketProvider = ActivatorUtilities.GetServiceOrCreateInstance<INamedBucketProvider>(provider);
+
+        Task<IBucket> task = namedBucketProvider.GetBucketAsync().AsTask();
+
+        return task.GetAwaiter().GetResult();
+    }
+
     private static int ComplexityCalculator(ComplexityContext context)
     {
         int cost = context.Complexity + context.ChildComplexity;
@@ -132,6 +124,12 @@ internal static class ProgramConfiguration
         Log.Debug(ProgramConfiguration.MessageTemplate, $"Cost: {context.Selection.Name} {cost}");
 
         return cost;
+    }
+
+    private static void ConfigureClusterOptions(ClusterOptions options, IConfiguration configuration)
+    {
+        configuration.GetSection("couchbase").Bind(options);
+        options.AddLinq();
     }
 
     private static void ConfigureRequestExecutorOptions(IServiceProvider provider, RequestExecutorOptions options)
@@ -183,10 +181,21 @@ internal static class ProgramConfiguration
         }
     }
 
+    private static PagingOptions GetPagingOptions()
+    {
+        return new PagingOptions() { MaxPageSize = 100, IncludeTotalCount = true };
+    }
+
     private static void HostConfiguration(IConfigurationBuilder configurationBuilder)
     {
         configurationBuilder.AddJsonFile("appsettings.json");
         configurationBuilder.AddUserSecrets<Program>();
+
+        IConfiguration c = configurationBuilder.Build();
+
+        IConfigurationSection configurationSection = c.GetSection("Vault");
+
+        configurationBuilder.AddVault(options => { configurationSection.Bind(options); });
     }
 
     private static void LoggerConfiguration(HostBuilderContext context, IServiceProvider provider, LoggerConfiguration loggerConfiguration)
