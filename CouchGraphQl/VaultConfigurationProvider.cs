@@ -39,11 +39,11 @@ internal class VaultConfigurationProvider : ConfigurationProvider
     {
         try
         {
-            Secret<Dictionary<string, object>>? secret =
-                await this.client.V1.Secrets.KeyValue.V1.ReadSecretAsync(path: this.options.Path, mountPoint: this.options.MountPoint);
+            Secret<SecretData>? secret =
+                await this.client.V1.Secrets.KeyValue.V2.ReadSecretAsync(path: this.options.Path, mountPoint: this.options.MountPoint);
 
-            string? username = secret.Data[nameof(username)].ToString();
-            string? password = secret.Data[nameof(password)].ToString();
+            string? username = secret.Data.Data[nameof(username)].ToString();
+            string? password = secret.Data.Data[nameof(password)].ToString();
 
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {

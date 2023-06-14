@@ -189,7 +189,8 @@ internal static class ProgramConfiguration
     private static void HostConfiguration(IConfigurationBuilder configurationBuilder)
     {
         configurationBuilder.AddJsonFile("appsettings.json");
-        configurationBuilder.AddUserSecrets<Program>();
+        configurationBuilder.AddJsonFile("appsettings.secret.json", optional: true); // this will be mounted in k8s and should not exist locally
+        configurationBuilder.AddUserSecrets<Program>(); // put the credentials for Vault in secrets
 
         IConfiguration c = configurationBuilder.Build();
 
