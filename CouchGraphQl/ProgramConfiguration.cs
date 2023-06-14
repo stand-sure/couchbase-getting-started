@@ -189,14 +189,14 @@ internal static class ProgramConfiguration
     private static void HostConfiguration(IConfigurationBuilder configurationBuilder)
     {
         configurationBuilder.AddJsonFile("appsettings.json");
-        configurationBuilder.AddJsonFile("appsettings.secret.json", optional: true); // this will be mounted in k8s and should not exist locally
-        configurationBuilder.AddUserSecrets<Program>(); // put the credentials for Vault in secrets
+        
+        // this will be mounted in k8s and should not exist locally
+        configurationBuilder.AddJsonFile("appsettings.secret.json", optional: true);
+        
+        // put the credentials for Vault in secrets
+        configurationBuilder.AddUserSecrets<Program>();
 
-        IConfiguration c = configurationBuilder.Build();
-
-        IConfigurationSection configurationSection = c.GetSection("Vault");
-
-        configurationBuilder.AddVault(options => { configurationSection.Bind(options); });
+        configurationBuilder.AddVault();
     }
 
     private static void LoggerConfiguration(HostBuilderContext context, IServiceProvider provider, LoggerConfiguration loggerConfiguration)

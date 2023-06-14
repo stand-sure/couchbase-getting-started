@@ -32,18 +32,23 @@ internal class VaultConfigurationProvider : ConfigurationProvider
 
     public override void Load()
     {
-        this.GetDatabaseCredentials().Wait();
+        this.LoadAsync().Wait();
     }
 
-    private async Task GetDatabaseCredentials()
+    private async Task LoadAsync()
+    {
+        await this.GetDatabaseCredentialsAsync().ConfigureAwait(false);
+    }
+
+    private async Task GetDatabaseCredentialsAsync()
     {
         try
         {
             Secret<SecretData>? secret =
                 await this.client.V1.Secrets.KeyValue.V2.ReadSecretAsync(path: this.options.Path, mountPoint: this.options.MountPoint);
 
-            string? username = secret.Data.Data[nameof(username)].ToString();
-            string? password = secret.Data.Data[nameof(password)].ToString();
+            string? username = secret.Data.Data.TryGetValue(nameof(username), out object? name) ? name?.ToString() : null;
+            string? password = secret.Data.Data.TryGetValue(nameof(password), out object? pass) ? pass?.ToString() : null;
 
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {

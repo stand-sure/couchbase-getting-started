@@ -1,11 +1,25 @@
 namespace CouchGraphQl;
 
+using JetBrains.Annotations;
+
 internal static class VaultExtensions
 {
-    public static IConfigurationBuilder AddVault(this IConfigurationBuilder builder, Action<VaultOptions> configureOptions)
+    [PublicAPI]
+    public static IConfigurationBuilder AddVault(this IConfigurationBuilder builder)
     {
-        var configurationSource = new VaultConfigurationSource(configureOptions);
+        IConfiguration configuration = builder.Build();
+        IConfigurationSection configurationSection = configuration.GetSection("Vault");
+
+        if (configurationSection.Exists() is false)
+        {
+            return builder;
+        }
+
+        void ConfigureOptions(VaultOptions options) => configurationSection.Bind(options);
+
+        var configurationSource = new VaultConfigurationSource(ConfigureOptions);
         builder.Add(configurationSource);
+        
         return builder;
     }
 }
