@@ -1,7 +1,7 @@
 abstract CouchGraphQl.Data.AccessorBase<T, TCreate>.MakeEntity(int id, TCreate createInfo) -> T
 CouchGraphQl.Data.AccessorBase<T, TCreate>
 CouchGraphQl.Data.AccessorBase<T, TCreate>.AccessorBase(CouchGraphQl.Data.MyBucketContext! bucketContext, Microsoft.Extensions.Logging.ILogger<CouchGraphQl.Data.AccessorBase<T, TCreate>!>! logger) -> void
-CouchGraphQl.Data.AccessorBase<T, TCreate>.CreateAsync(TCreate createInfo, string! scope = "inventory") -> System.Threading.Tasks.Task<T?>!
+CouchGraphQl.Data.AccessorBase<T, TCreate>.CreateAsync(TCreate createInfo, string! scope = "inventory", System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T?>!
 CouchGraphQl.Data.AccessorBase<T, TCreate>.Queryable.get -> System.Linq.IQueryable<T>!
 CouchGraphQl.Data.AirlineAccessor
 CouchGraphQl.Data.AirlineAccessor.AirlineAccessor(CouchGraphQl.Data.MyBucketContext! bucketContext, Microsoft.Extensions.Logging.ILogger<CouchGraphQl.Data.AirlineAccessor!>! logger) -> void
