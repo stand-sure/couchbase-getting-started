@@ -50,7 +50,13 @@ internal static class ProgramConfiguration
     {
         services.AddLogging();
         services.AddHealthChecks();
+        services.AddCouchbaseAndDataObjects(configuration);
+        services.AddGraphQl();
+        services.AddInstrumentation(environment, configuration);
+    }
 
+    private static void AddCouchbaseAndDataObjects(this IServiceCollection services, IConfiguration configuration)
+    {
         services.AddCouchbase(options => ConfigureClusterOptions(options, configuration))
             .AddCouchbaseBucket<INamedBucketProvider>("travel-sample");
 
@@ -58,7 +64,10 @@ internal static class ProgramConfiguration
 
         services.AddTransient<MyBucketContext>();
         services.AddScoped<AirlineAccessor>();
+    }
 
+    private static void AddGraphQl(this IServiceCollection services)
+    {
         services.AddGraphQLServer()
             .ModifyOptions(ConfigureSchemaOptions)
             .AddQueries()
@@ -72,8 +81,6 @@ internal static class ProgramConfiguration
             .AddFiltering()
             .AddErrorFilter<DetailRemovingErrorFilter>()
             .AllowIntrospection(true);
-
-        services.AddInstrumentation(environment, configuration);
     }
 
     private static void AddInstrumentation(
@@ -183,16 +190,16 @@ internal static class ProgramConfiguration
 
     private static PagingOptions GetPagingOptions()
     {
-        return new PagingOptions() { MaxPageSize = 100, IncludeTotalCount = true };
+        return new PagingOptions { MaxPageSize = 100, IncludeTotalCount = true };
     }
 
     private static void HostConfiguration(IConfigurationBuilder configurationBuilder)
     {
         configurationBuilder.AddJsonFile("appsettings.json");
-        
+
         // this will be mounted in k8s and should not exist locally
-        configurationBuilder.AddJsonFile("appsettings.secret.json", optional: true);
-        
+        configurationBuilder.AddJsonFile("appsettings.secret.json", true);
+
         // put the credentials for Vault in secrets
         configurationBuilder.AddUserSecrets<Program>();
 
