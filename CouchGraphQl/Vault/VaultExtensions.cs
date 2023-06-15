@@ -1,5 +1,7 @@
 namespace CouchGraphQl;
 
+using CouchGraphQl.Vault;
+
 using JetBrains.Annotations;
 
 internal static class VaultExtensions
