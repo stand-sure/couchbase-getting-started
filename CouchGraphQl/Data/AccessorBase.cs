@@ -24,18 +24,18 @@ public abstract class AccessorBase<T, TCreate>
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public IQueryable<T> Queryable => this.bucketContext.Query<T>(BucketQueryOptions.None);
+    public IQueryable<T> Queryable => this.bucketContext.Query<T>(BucketQueryOptions.None).Where(entity => entity.Type == GetTypeName());
 
     public async Task<T?> CreateAsync(TCreate createInfo, CancellationToken cancellationToken = default)
     {
         (int id, string? key) = GenerateIdAndKey();
 
         T entity = this.MakeEntity(id, createInfo);
+        entity.Type ??= GetTypeName();
 
-        var collectionAttribute = typeof(T).GetCustomAttribute<CouchbaseCollectionAttribute>();
-
-        string collectionName = collectionAttribute?.Collection ?? typeof(T).Name.ToLowerInvariant();
-        IScope scopeAsync = await this.bucketContext.Bucket.ScopeAsync(collectionAttribute?.Scope ?? "_default");
+        (string? scope, string? collectionName) = typeof(T).GetCustomAttribute<CouchbaseCollectionAttribute>()!;
+         
+        IScope scopeAsync = await this.bucketContext.Bucket.ScopeAsync(scope ?? "_default");
         
         ICouchbaseCollection collection = await scopeAsync.CollectionAsync(collectionName).ConfigureAwait(false);
 
@@ -75,4 +75,6 @@ public abstract class AccessorBase<T, TCreate>
 
         return collection.GetAsync(key).ContinueWith(GetResult);
     }
+
+    private static string GetTypeName() => typeof(T).Name.ToLowerInvariant();
 }
