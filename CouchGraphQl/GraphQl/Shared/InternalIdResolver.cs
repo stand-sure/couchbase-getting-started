@@ -1,4 +1,4 @@
-namespace CouchGraphQl.GraphQl;
+namespace CouchGraphQl.GraphQl.Shared;
 
 using CouchGraphQl.Data.Documents;
 

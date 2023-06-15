@@ -1,4 +1,4 @@
-namespace CouchGraphQl.GraphQl;
+namespace CouchGraphQl.GraphQl.Shared;
 
 using Couchbase;
 using Couchbase.Extensions.DependencyInjection;
@@ -6,12 +6,7 @@ using Couchbase.Linq;
 
 using CouchGraphQl.Data.Documents;
 
-using HotChocolate.Execution.Instrumentation;
-using HotChocolate.Execution.Processing;
-
 using JetBrains.Annotations;
-
-using RequestDelegate = Microsoft.AspNetCore.Http.RequestDelegate;
 
 [UsedImplicitly]
 internal class KeyResolver

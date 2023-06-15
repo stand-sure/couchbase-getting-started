@@ -4,10 +4,12 @@ using System.Reflection;
 
 using Couchbase;
 using Couchbase.Extensions.DependencyInjection;
+using Couchbase.Extensions.Tracing.Otel.Tracing;
 using Couchbase.Linq;
 
 using CouchGraphQl.Data;
-using CouchGraphQl.GraphQl;
+using CouchGraphQl.GraphQl.Airline;
+using CouchGraphQl.GraphQl.Shared;
 
 using HotChocolate.Execution.Configuration;
 using HotChocolate.Execution.Options;
@@ -57,7 +59,7 @@ internal static class ProgramConfiguration
 
     private static void AddCouchbaseAndDataObjects(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddCouchbase(options => ConfigureClusterOptions(options, configuration))
+        services.AddCouchbase(options => ConfigureClusterOptions(options, configuration, services))
             .AddCouchbaseBucket<INamedBucketProvider>("travel-sample");
 
         services.AddSingleton(BucketFactory);
@@ -133,10 +135,18 @@ internal static class ProgramConfiguration
         return cost;
     }
 
-    private static void ConfigureClusterOptions(ClusterOptions options, IConfiguration configuration)
+    private static void ConfigureClusterOptions(ClusterOptions options, IConfiguration configuration, IServiceCollection services)
     {
         configuration.GetSection("couchbase").Bind(options);
         options.AddLinq();
+
+        options.WithLogging(services.BuildServiceProvider().GetService<ILoggerFactory>());
+
+        options.WithTracing(tracingOptions =>
+        {
+            tracingOptions.Enabled = true;
+            tracingOptions.RequestTracer = new OpenTelemetryRequestTracer();
+        });
     }
 
     private static void ConfigureRequestExecutorOptions(IServiceProvider provider, RequestExecutorOptions options)
@@ -166,6 +176,7 @@ internal static class ProgramConfiguration
         providerBuilder.AddHttpClientInstrumentation();
         providerBuilder.AddAspNetCoreInstrumentation();
         providerBuilder.AddHotChocolateInstrumentation();
+        providerBuilder.AddCouchbaseInstrumentation();
 
         providerBuilder.AddJaegerExporter(options =>
         {
@@ -192,15 +203,13 @@ internal static class ProgramConfiguration
     {
         return new PagingOptions
         {
-            MaxPageSize = 100, 
+            MaxPageSize = 100,
             //IncludeTotalCount = true, // this blows up Couchbase
         };
     }
 
     private static void HostConfiguration(IConfigurationBuilder configurationBuilder)
     {
-        configurationBuilder.AddJsonFile("appsettings.json");
-
         // this will be mounted in k8s and should not exist locally
         configurationBuilder.AddJsonFile("appsettings.secret.json", true);
 

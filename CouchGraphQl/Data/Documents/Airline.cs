@@ -2,12 +2,13 @@ namespace CouchGraphQl.Data.Documents;
 
 using System.Text.Json.Serialization;
 
+using Couchbase.Linq;
 using Couchbase.Linq.Filters;
 
 using JetBrains.Annotations;
 
 [PublicAPI]
-[DocumentTypeFilter("airline")]
+[CouchbaseCollection("inventory", "airline")]
 public class Airline : AirlineCreateInput, IEntityWithId<int>
 {
     public Airline()

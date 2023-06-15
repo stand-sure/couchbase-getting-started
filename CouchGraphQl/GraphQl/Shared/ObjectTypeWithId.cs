@@ -1,9 +1,12 @@
-namespace CouchGraphQl.GraphQl;
+namespace CouchGraphQl.GraphQl.Shared;
 
 using System.Text.RegularExpressions;
 
 using CouchGraphQl.Data.Documents;
 
+using JetBrains.Annotations;
+
+[PublicAPI]
 public abstract class ObjectTypeWithId<T> : ObjectType<T>
     where T : IEntityWithId<int>
 {

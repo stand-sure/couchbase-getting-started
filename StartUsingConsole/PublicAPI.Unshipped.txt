@@ -1,0 +1,28 @@
+override StartUsingConsole.HostedServices.CouchbaseDemoService.ExecuteAsync(System.Threading.CancellationToken stoppingToken) -> System.Threading.Tasks.Task!
+override StartUsingConsole.HostedServices.CouchbaseDemoService.StopAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+override StartUsingConsole.HostedServices.TcpHealthProbeService.ExecuteAsync(System.Threading.CancellationToken stoppingToken) -> System.Threading.Tasks.Task!
+StartUsingConsole.AsyncLazy<T>
+StartUsingConsole.AsyncLazy<T>.AsyncLazy(System.Func<System.Threading.Tasks.Task<T>!>! taskFactory) -> void
+StartUsingConsole.AsyncLazy<T>.AsyncLazy(System.Func<T>! valueFactory) -> void
+StartUsingConsole.AsyncLazy<T>.GetAwaiter() -> System.Runtime.CompilerServices.TaskAwaiter<T>
+StartUsingConsole.AsyncLazy<T>.GetValue() -> T
+StartUsingConsole.Documents.Airline
+StartUsingConsole.Documents.Airline.Airline() -> void
+StartUsingConsole.Documents.Airline.Callsign.get -> string?
+StartUsingConsole.Documents.Airline.Callsign.set -> void
+StartUsingConsole.Documents.Airline.Country.get -> string?
+StartUsingConsole.Documents.Airline.Country.set -> void
+StartUsingConsole.Documents.Airline.Iata.get -> string?
+StartUsingConsole.Documents.Airline.Iata.set -> void
+StartUsingConsole.Documents.Airline.Icao.get -> string?
+StartUsingConsole.Documents.Airline.Icao.set -> void
+StartUsingConsole.Documents.Airline.Id.get -> string?
+StartUsingConsole.Documents.Airline.Id.set -> void
+StartUsingConsole.Documents.Airline.Name.get -> string?
+StartUsingConsole.Documents.Airline.Name.set -> void
+StartUsingConsole.Documents.Airline.Type.get -> string?
+StartUsingConsole.Documents.Airline.Type.set -> void
+StartUsingConsole.HostedServices.CouchbaseDemoService
+StartUsingConsole.HostedServices.CouchbaseDemoService.CouchbaseDemoService(Microsoft.Extensions.Logging.ILogger<StartUsingConsole.HostedServices.CouchbaseDemoService!>! logger, Couchbase.Extensions.DependencyInjection.INamedBucketProvider! namedBucketProvider) -> void
+StartUsingConsole.HostedServices.TcpHealthProbeService
+StartUsingConsole.HostedServices.TcpHealthProbeService.TcpHealthProbeService(Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckService! healthCheckService, Microsoft.Extensions.Logging.ILogger<StartUsingConsole.HostedServices.TcpHealthProbeService!>! logger, Microsoft.Extensions.Configuration.IConfiguration? configuration) -> void

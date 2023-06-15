@@ -1,4 +1,4 @@
-namespace CouchGraphQl.GraphQl;
+namespace CouchGraphQl.GraphQl.Airline;
 
 using CouchGraphQl.Data.Documents;
 
