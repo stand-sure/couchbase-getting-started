@@ -1,6 +1,4 @@
-namespace CouchGraphQl.Data;
-
-using CouchGraphQl.Data.Documents;
+namespace CouchGraphQl.Data.Documents;
 
 using JetBrains.Annotations;
 

@@ -8,8 +8,10 @@ using Couchbase.Extensions.Tracing.Otel.Tracing;
 using Couchbase.Linq;
 
 using CouchGraphQl.Data;
+using CouchGraphQl.Data.Documents;
 using CouchGraphQl.GraphQl.Airline;
 using CouchGraphQl.GraphQl.Shared;
+using CouchGraphQl.HealthCheck;
 
 using HotChocolate.Execution.Configuration;
 using HotChocolate.Execution.Options;
@@ -51,7 +53,10 @@ internal static class ProgramConfiguration
     internal static void ConfigureServices(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
         services.AddLogging();
-        services.AddHealthChecks();
+        
+        services.AddHealthChecks()
+            .AddCouchbaseHealthCheck();
+        
         services.AddCouchbaseAndDataObjects(configuration);
         services.AddGraphQl();
         services.AddInstrumentation(environment, configuration);
