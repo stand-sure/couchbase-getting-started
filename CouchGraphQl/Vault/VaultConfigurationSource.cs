@@ -1,4 +1,4 @@
-namespace CouchGraphQl;
+namespace CouchGraphQl.Vault;
 
 internal class VaultConfigurationSource : IConfigurationSource
 {
