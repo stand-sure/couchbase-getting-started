@@ -6,7 +6,7 @@ using Serilog;
 
 internal class DictionaryFlattener
 {
-    private readonly Stack<string> context = new Stack<string>();
+    private readonly Stack<string> context = new();
     private readonly IDictionary<string, string> data = new Dictionary<string, string>();
     private string currentPath = null!;
 
@@ -16,29 +16,24 @@ internal class DictionaryFlattener
         return this.data;
     }
 
-    private void VisitNode(string entryKey, object node)
+    private void EnterContext(string key)
     {
-        this.EnterContext(entryKey);
+        this.context.Push(key);
+        this.currentPath = string.Join(':', this.context.Reverse());
+    }
 
-        switch (node)
+    private void ExitContext()
+    {
+        this.context.Pop();
+        this.currentPath = string.Join(':', this.context.Reverse());
+    }
+
+    private void VisitDictionary(IDictionary<string, object> dictionary)
+    {
+        foreach ((string? key, object? value) in dictionary)
         {
-            case string text:
-                this.data[this.currentPath] = text;
-                break;
-            case IDictionary<string, object> dictionary:
-            {
-                this.VisitDictionary(dictionary);
-                break;
-            }
-            case JsonElement element:
-                this.VisitJsonElement(element);
-                break;
-            default:
-                this.data[this.currentPath] = string.Empty;
-                break;
+            this.VisitNode(key, value);
         }
-        
-        this.ExitContext();
     }
 
     private void VisitJsonElement(JsonElement element)
@@ -66,29 +61,31 @@ internal class DictionaryFlattener
             return;
         }
 
-        foreach ((string? key, object? value) in dictionary)
+        this.VisitDictionary(dictionary);
+    }
+
+    private void VisitNode(string entryKey, object node)
+    {
+        this.EnterContext(entryKey);
+
+        switch (node)
         {
-            this.VisitNode(key, value);
+            case string text:
+                this.data[this.currentPath] = text;
+                break;
+            case IDictionary<string, object> dictionary:
+            {
+                this.VisitDictionary(dictionary);
+                break;
+            }
+            case JsonElement element:
+                this.VisitJsonElement(element);
+                break;
+            default:
+                this.data[this.currentPath] = string.Empty;
+                break;
         }
-    }
 
-    private void VisitDictionary(IDictionary<string, object> dictionary)
-    {
-        foreach ((string? key, object? value) in dictionary)
-        {
-            this.VisitNode(key, value);
-        }
-    }
-
-    private void EnterContext(string key)
-    {
-        this.context.Push(key);
-        this.currentPath = string.Join(':', this.context.Reverse());
-    }
-
-    private void ExitContext()
-    {
-        this.context.Pop();
-        this.currentPath = string.Join(':', this.context.Reverse());
+        this.ExitContext();
     }
 }
