@@ -1,6 +1,9 @@
 namespace CouchGraphQl.Data;
 
+using System.Reflection;
+
 using Couchbase.KeyValue;
+using Couchbase.Linq;
 
 using CouchGraphQl.Data.Documents;
 
@@ -21,16 +24,20 @@ public abstract class AccessorBase<T, TCreate>
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public IQueryable<T> Queryable => this.bucketContext.Query<T>();
+    public IQueryable<T> Queryable => this.bucketContext.Query<T>(BucketQueryOptions.None);
 
-    public async Task<T?> CreateAsync(TCreate createInfo, string scope = "inventory", CancellationToken cancellationToken = default)
+    public async Task<T?> CreateAsync(TCreate createInfo, CancellationToken cancellationToken = default)
     {
         (int id, string? key) = GenerateIdAndKey();
 
         T entity = this.MakeEntity(id, createInfo);
 
-        string collectionName = typeof(T).Name.ToLowerInvariant();
-        ICouchbaseCollection collection = await (await this.bucketContext.Bucket.ScopeAsync(scope)).CollectionAsync(collectionName).ConfigureAwait(false);
+        var collectionAttribute = typeof(T).GetCustomAttribute<CouchbaseCollectionAttribute>();
+
+        string collectionName = collectionAttribute?.Collection ?? typeof(T).Name.ToLowerInvariant();
+        IScope scopeAsync = await this.bucketContext.Bucket.ScopeAsync(collectionAttribute?.Scope ?? "_default");
+        
+        ICouchbaseCollection collection = await scopeAsync.CollectionAsync(collectionName).ConfigureAwait(false);
 
         try
         {

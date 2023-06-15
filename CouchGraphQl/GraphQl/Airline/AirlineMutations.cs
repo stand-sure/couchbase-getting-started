@@ -1,4 +1,4 @@
-namespace CouchGraphQl.GraphQl;
+namespace CouchGraphQl.GraphQl.Airline;
 
 using CouchGraphQl.Data;
 using CouchGraphQl.Data.Documents;
@@ -11,9 +11,10 @@ public class AirlineMutations
 {
     public Task<CreateAirlinePayload> CreateAirlineAsync(
         [Service] AirlineAccessor airlineAccessor,
-        AirlineCreateInput airlineCreateInput)
+        AirlineCreateInput airlineCreateInput,
+        CancellationToken cancellationToken)
     {
-        return airlineAccessor.CreateAsync(airlineCreateInput).ContinueWith(task => new CreateAirlinePayload { Airline = task.Result });
+        return airlineAccessor.CreateAsync(airlineCreateInput, cancellationToken).ContinueWith(task => new CreateAirlinePayload { Airline = task.Result }, cancellationToken);
     }
 
     public Task<Airline?> Throw()
