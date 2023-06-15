@@ -21,12 +21,12 @@ internal class VaultConfigurationProvider : ConfigurationProvider
 
     private IVaultClient MakeClient()
     {
-       IAuthMethodInfo authInfo = new UserPassAuthMethodInfo(this.options.UserName, this.options.Password);
-        
+        IAuthMethodInfo authInfo = new UserPassAuthMethodInfo(this.options.UserName, this.options.Password);
+
         var clientSettings = new VaultClientSettings(this.options.Address, authInfo);
 
         var vaultClient = new VaultClient(clientSettings);
-        
+
         return vaultClient;
     }
 
@@ -47,16 +47,12 @@ internal class VaultConfigurationProvider : ConfigurationProvider
             Secret<SecretData>? secret =
                 await this.client.V1.Secrets.KeyValue.V2.ReadSecretAsync(path: this.options.Path, mountPoint: this.options.MountPoint);
 
-            string? username = secret.Data.Data.TryGetValue(nameof(username), out object? name) ? name?.ToString() : null;
-            string? password = secret.Data.Data.TryGetValue(nameof(password), out object? pass) ? pass?.ToString() : null;
+            IDictionary<string, string> dictionary = new DictionaryFlattener().Flatten(secret.Data.Data);
 
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            foreach ((string? key, string? value) in dictionary)
             {
-                return;
+                this.Data.Add(key, value);
             }
-
-            this.Data.Add($"couchbase:{nameof(username)}", username);
-            this.Data.Add($"couchbase:{nameof(password)}", password);
         }
         catch (Exception ex)
         {
