@@ -9,25 +9,13 @@ using VaultSharp.V1.Commons;
 
 internal class VaultConfigurationProvider : ConfigurationProvider
 {
-    private readonly VaultOptions options;
     private readonly IVaultClient client;
+    private readonly VaultOptions options;
 
     public VaultConfigurationProvider(VaultOptions options)
     {
         this.options = options;
-
         this.client = this.MakeClient();
-    }
-
-    private IVaultClient MakeClient()
-    {
-        IAuthMethodInfo authInfo = new UserPassAuthMethodInfo(this.options.UserName, this.options.Password);
-
-        var clientSettings = new VaultClientSettings(this.options.Address, authInfo);
-
-        var vaultClient = new VaultClient(clientSettings);
-
-        return vaultClient;
     }
 
     public override void Load()
@@ -35,17 +23,12 @@ internal class VaultConfigurationProvider : ConfigurationProvider
         this.LoadAsync().Wait();
     }
 
-    private async Task LoadAsync()
-    {
-        await this.GetDatabaseCredentialsAsync().ConfigureAwait(false);
-    }
-
     private async Task GetDatabaseCredentialsAsync()
     {
         try
         {
             Secret<SecretData>? secret =
-                await this.client.V1.Secrets.KeyValue.V2.ReadSecretAsync(path: this.options.Path, mountPoint: this.options.MountPoint);
+                await this.client.V1.Secrets.KeyValue.V2.ReadSecretAsync(this.options.Path, mountPoint: this.options.MountPoint);
 
             IDictionary<string, string> dictionary = new DictionaryFlattener().Flatten(secret.Data.Data);
 
@@ -58,5 +41,21 @@ internal class VaultConfigurationProvider : ConfigurationProvider
         {
             Log.Error(ex, "{Message}", ex.Message);
         }
+    }
+
+    private async Task LoadAsync()
+    {
+        await this.GetDatabaseCredentialsAsync().ConfigureAwait(false);
+    }
+
+    private IVaultClient MakeClient()
+    {
+        IAuthMethodInfo authInfo = new UserPassAuthMethodInfo(this.options.UserName, this.options.Password);
+
+        var clientSettings = new VaultClientSettings(this.options.Address, authInfo);
+
+        var vaultClient = new VaultClient(clientSettings);
+
+        return vaultClient;
     }
 }
