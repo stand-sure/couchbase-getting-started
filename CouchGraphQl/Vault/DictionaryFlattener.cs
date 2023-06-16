@@ -12,7 +12,7 @@ internal class DictionaryFlattener
 
     public IDictionary<string, string> Flatten(IDictionary<string, object> dictionary)
     {
-        this.VisitDictionary(dictionary);
+        this.ProcessDictionary(dictionary);
         return this.data;
     }
 
@@ -28,7 +28,7 @@ internal class DictionaryFlattener
         this.currentPath = string.Join(':', this.context.Reverse());
     }
 
-    private void VisitDictionary(IDictionary<string, object> dictionary)
+    private void ProcessDictionary(IDictionary<string, object> dictionary)
     {
         foreach ((string? key, object? value) in dictionary)
         {
@@ -36,32 +36,41 @@ internal class DictionaryFlattener
         }
     }
 
-    private void VisitJsonElement(JsonElement element)
+    private void ProcessJsonElement(JsonElement element)
     {
         switch (element.ValueKind)
         {
             case JsonValueKind.String:
-                this.data[this.currentPath] = element.GetString() ?? string.Empty;
+                this.StoreString(element.GetString());
                 break;
             case JsonValueKind.Object:
-                this.VisitJsonObject(element);
+                this.ProcessJsonObject(element);
                 break;
             default:
-                Log.Debug("Unknown: {Element}", element);
+                Log.Warning("Unknown: {Element}", element);
+                this.StoreString(element.ToString());
                 break;
         }
     }
 
-    private void VisitJsonObject(JsonElement element)
+    private void ProcessJsonObject(JsonElement element)
     {
         var dictionary = element.Deserialize<IDictionary<string, object>>();
 
-        if (dictionary?.Any() is not true)
+        switch (dictionary?.Any())
         {
-            return;
+            case true:
+                this.ProcessDictionary(dictionary);
+                break;
+            default:
+                this.StoreString(element.ToString());
+                break;
         }
+    }
 
-        this.VisitDictionary(dictionary);
+    private void StoreString(string? value)
+    {
+        this.data[this.currentPath] = value ?? string.Empty;
     }
 
     private void VisitNode(string entryKey, object node)
@@ -71,18 +80,18 @@ internal class DictionaryFlattener
         switch (node)
         {
             case string text:
-                this.data[this.currentPath] = text;
+                this.StoreString(text);
                 break;
             case IDictionary<string, object> dictionary:
             {
-                this.VisitDictionary(dictionary);
+                this.ProcessDictionary(dictionary);
                 break;
             }
             case JsonElement element:
-                this.VisitJsonElement(element);
+                this.ProcessJsonElement(element);
                 break;
             default:
-                this.data[this.currentPath] = string.Empty;
+                this.StoreString(node.ToString());
                 break;
         }
 
