@@ -31,7 +31,7 @@ public abstract class AccessorBase<T, TCreate>
         (int id, string? key) = GenerateIdAndKey();
 
         T entity = this.MakeEntity(id, createInfo);
-        entity.Type ??= GetTypeName();
+        entity.Type = string.IsNullOrEmpty(entity.Type) ? GetTypeName() : entity.Type;
 
         (string? scope, string? collectionName) = typeof(T).GetCustomAttribute<CouchbaseCollectionAttribute>()!;
          

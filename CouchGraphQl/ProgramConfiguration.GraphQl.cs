@@ -1,6 +1,10 @@
 namespace CouchGraphQl;
 
+using System.Reflection;
+
 using CouchGraphQl.GraphQl.Airline;
+using CouchGraphQl.GraphQl.Bucket;
+using CouchGraphQl.GraphQl.Scope;
 using CouchGraphQl.GraphQl.Shared;
 
 using HotChocolate.Execution.Configuration;
@@ -31,14 +35,26 @@ internal static partial class ProgramConfiguration
 
     private static IRequestExecutorBuilder AddMutations(this IRequestExecutorBuilder builder)
     {
-        return builder.AddMutationType(descriptor => descriptor.Name(OperationTypeNames.Mutation))
-            .AddTypeExtension<AirlineMutations>();
+        builder.AddMutationType(descriptor => descriptor.Name(OperationTypeNames.Mutation));
+
+        // poc to add all mutations
+        IEnumerable<Type> mutations = Assembly.GetExecutingAssembly().GetTypes()
+            .Where(type => type.GetCustomAttribute<ExtendObjectTypeAttribute>()?.Name == OperationTypeNames.Mutation);
+
+        foreach (Type mutation in mutations)
+        {
+            builder.AddTypeExtension(mutation);
+        }
+        
+        return builder;
     }
 
     private static IRequestExecutorBuilder AddQueries(this IRequestExecutorBuilder builder)
     {
         return builder.AddQueryType(descriptor => descriptor.Name(OperationTypeNames.Query))
-            .AddTypeExtension<AirlineQueries>();
+            .AddTypeExtension<AirlineQueries>()
+            .AddTypeExtension<BucketQueries>()
+            .AddTypeExtension<ScopeQueries>();
     }
 
     private static IRequestExecutorBuilder AddTypes(this IRequestExecutorBuilder builder)
