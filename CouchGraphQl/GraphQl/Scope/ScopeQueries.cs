@@ -4,6 +4,9 @@ using Couchbase;
 using Couchbase.Extensions.DependencyInjection;
 using Couchbase.Management.Collections;
 
+using JetBrains.Annotations;
+
+[PublicAPI]
 [ExtendObjectType(OperationTypeNames.Query)]
 public class ScopeQueries
 {

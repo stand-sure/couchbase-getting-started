@@ -1,4 +1,4 @@
-namespace CouchGraphQl.GraphQl.Scope;
+namespace CouchGraphQl.GraphQl.Collection;
 
 using Couchbase;
 using Couchbase.Extensions.DependencyInjection;
@@ -7,36 +7,31 @@ using Couchbase.Management.Collections;
 using JetBrains.Annotations;
 
 [ExtendObjectType(OperationTypeNames.Mutation)]
-public class ScopeMutations
+public class CollectionMutations
 {
     [UsedImplicitly]
-    public async Task<bool> CreateScopeAsync(
-        string scopeName,
+    public async Task<bool> CreateCollectionAsync(
         string bucketName,
+        string scopeName,
+        string collectionName,
         [Service] IBucketProvider bucketProvider,
-        [Service] ILogger<ScopeMutations> logger,
-        CancellationToken cancellationToken)
+        [Service] ILogger<CollectionMutations> logger)
+
     {
         bool success;
 
         try
         {
             IBucket bucket = await bucketProvider.GetBucketAsync(bucketName).ConfigureAwait(false);
-
-            await bucket.Collections.CreateScopeAsync(scopeName,
-                options =>
-                {
-                    options.CancellationToken(cancellationToken);
-                });
-
+            await bucket.Collections.CreateCollectionAsync(new CollectionSpec(scopeName, collectionName));
             success = true;
         }
         catch (Exception e)
         {
-            logger.LogError(e, "{Class}.{Method} {Message}", nameof(ScopeMutations), nameof(this.CreateScopeAsync), e.Message);
+            logger.LogError(e, "{Class}.{Method} {Error}", nameof(CollectionMutations), nameof(this.CreateCollectionAsync), e.Message);
             success = false;
         }
-
+        
         return success;
     }
 }

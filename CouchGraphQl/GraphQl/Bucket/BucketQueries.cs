@@ -4,11 +4,13 @@ using Couchbase;
 using Couchbase.Extensions.DependencyInjection;
 using Couchbase.Management.Buckets;
 
-using CouchGraphQl.Data;
+using JetBrains.Annotations;
 
+[PublicAPI]
 [ExtendObjectType(OperationTypeNames.Query)]
 public class BucketQueries
 {
+    [UsedImplicitly]
     public async Task<IEnumerable<BucketSettings>> GetBucketsAsync(
         [Service] IClusterProvider clusterProvider)
     {

@@ -1,14 +1,16 @@
 namespace CouchGraphQl.GraphQl.Bucket;
 
 using Couchbase.Extensions.DependencyInjection;
-using Couchbase.KeyValue;
 using Couchbase.Management.Buckets;
 
 using CouchGraphQl.Data;
 
+using JetBrains.Annotations;
+
 [ExtendObjectType(OperationTypeNames.Mutation)]
 public class BucketMutations
 {
+    [UsedImplicitly]
     public async Task<bool> CreateBucketAsync(
         string bucketName,
         [Service] MyBucketContext context,

@@ -4,6 +4,7 @@ using System.Reflection;
 
 using CouchGraphQl.GraphQl.Airline;
 using CouchGraphQl.GraphQl.Bucket;
+using CouchGraphQl.GraphQl.Collection;
 using CouchGraphQl.GraphQl.Scope;
 using CouchGraphQl.GraphQl.Shared;
 
@@ -54,7 +55,8 @@ internal static partial class ProgramConfiguration
         return builder.AddQueryType(descriptor => descriptor.Name(OperationTypeNames.Query))
             .AddTypeExtension<AirlineQueries>()
             .AddTypeExtension<BucketQueries>()
-            .AddTypeExtension<ScopeQueries>();
+            .AddTypeExtension<ScopeQueries>()
+            .AddTypeExtension<CollectionQueries>();
     }
 
     private static IRequestExecutorBuilder AddTypes(this IRequestExecutorBuilder builder)

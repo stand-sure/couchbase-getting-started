@@ -50,6 +50,31 @@ CouchGraphQl.GraphQl.Airline.CreateAirlinePayload
 CouchGraphQl.GraphQl.Airline.CreateAirlinePayload.Airline.get -> CouchGraphQl.Data.Documents.Airline?
 CouchGraphQl.GraphQl.Airline.CreateAirlinePayload.Airline.set -> void
 CouchGraphQl.GraphQl.Airline.CreateAirlinePayload.CreateAirlinePayload() -> void
+CouchGraphQl.GraphQl.Bucket.BucketMutations
+CouchGraphQl.GraphQl.Bucket.BucketMutations.BucketMutations() -> void
+CouchGraphQl.GraphQl.Bucket.BucketMutations.CreateBucketAsync(string! bucketName, CouchGraphQl.Data.MyBucketContext! context, Microsoft.Extensions.Logging.ILogger<CouchGraphQl.GraphQl.Bucket.BucketMutations!>! logger) -> System.Threading.Tasks.Task<bool>!
+CouchGraphQl.GraphQl.Bucket.BucketQueries
+CouchGraphQl.GraphQl.Bucket.BucketQueries.BucketQueries() -> void
+CouchGraphQl.GraphQl.Bucket.BucketQueries.CheckBucketExistenceAsync(string! bucketName, Couchbase.Extensions.DependencyInjection.IClusterProvider! clusterProvider) -> System.Threading.Tasks.Task<bool>!
+CouchGraphQl.GraphQl.Bucket.BucketQueries.GetBucketsAsync(Couchbase.Extensions.DependencyInjection.IClusterProvider! clusterProvider) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Couchbase.Management.Buckets.BucketSettings!>!>!
+CouchGraphQl.GraphQl.Collection.CollectionMutations
+CouchGraphQl.GraphQl.Collection.CollectionMutations.CollectionMutations() -> void
+CouchGraphQl.GraphQl.Collection.CollectionMutations.CreateCollectionAsync(string! bucketName, string! scopeName, string! collectionName, Couchbase.Extensions.DependencyInjection.IBucketProvider! bucketProvider, Microsoft.Extensions.Logging.ILogger<CouchGraphQl.GraphQl.Collection.CollectionMutations!>! logger) -> System.Threading.Tasks.Task<bool>!
+CouchGraphQl.GraphQl.Collection.CollectionQueries
+CouchGraphQl.GraphQl.Collection.CollectionQueries.CollectionQueries() -> void
+CouchGraphQl.GraphQl.Collection.CollectionQueries.GetCollectionsAsync(string! bucketName, string! scopeName, Couchbase.Extensions.DependencyInjection.IBucketProvider! bucketProvider, Microsoft.Extensions.Logging.ILogger<CouchGraphQl.GraphQl.Scope.ScopeQueries!>! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string!>!>!
+CouchGraphQl.GraphQl.Scope.Scope
+CouchGraphQl.GraphQl.Scope.Scope.Collections.get -> System.Collections.Generic.IEnumerable<string!>!
+CouchGraphQl.GraphQl.Scope.Scope.Collections.init -> void
+CouchGraphQl.GraphQl.Scope.Scope.Name.get -> string!
+CouchGraphQl.GraphQl.Scope.Scope.Name.init -> void
+CouchGraphQl.GraphQl.Scope.Scope.Scope(string! Name, System.Collections.Generic.IEnumerable<string!>! Collections) -> void
+CouchGraphQl.GraphQl.Scope.ScopeMutations
+CouchGraphQl.GraphQl.Scope.ScopeMutations.CreateScopeAsync(string! scopeName, string! bucketName, Couchbase.Extensions.DependencyInjection.IBucketProvider! bucketProvider, Microsoft.Extensions.Logging.ILogger<CouchGraphQl.GraphQl.Scope.ScopeMutations!>! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+CouchGraphQl.GraphQl.Scope.ScopeMutations.ScopeMutations() -> void
+CouchGraphQl.GraphQl.Scope.ScopeQueries
+CouchGraphQl.GraphQl.Scope.ScopeQueries.GetScopesInBucketAsync(string! bucketName, Couchbase.Extensions.DependencyInjection.IBucketProvider! bucketProvider, Microsoft.Extensions.Logging.ILogger<CouchGraphQl.GraphQl.Scope.ScopeQueries!>! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CouchGraphQl.GraphQl.Scope.Scope!>!>!
+CouchGraphQl.GraphQl.Scope.ScopeQueries.ScopeQueries() -> void
 CouchGraphQl.GraphQl.Shared.LoqQueryAttribute
 CouchGraphQl.GraphQl.Shared.LoqQueryAttribute.LoqQueryAttribute() -> void
 CouchGraphQl.GraphQl.Shared.ObjectTypeWithId<T>
